@@ -1,0 +1,35 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Globals:
+  Function:
+    Runtime: nodejs16.x
+Resources:
+  # API Gateway
+  ServerlessApi:
+    Type: AWS::Serverless::Api
+    Properties:
+      Name: Sample Vee Validate Nuxt App
+      StageName: v1
+  # App
+  ServerlessFunctionApp:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: SampleVeeValidateNuxtApp
+      Handler: server/index.handler
+      CodeUri: .output
+      AutoPublishAlias: ''
+      Timeout: 60
+      MemorySize: 512
+      Events:
+        Root:
+          Type: Api
+          Properties:
+            Path: /
+            Method: ANY
+            RestApiId: !Ref ServerlessApi
+        Nuxt:
+          Type: Api
+          Properties:
+            Path: '/{proxy+}'
+            Method: ANY
+            RestApiId: !Ref ServerlessApi
